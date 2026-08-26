@@ -61,6 +61,13 @@ def test_release_defaults_to_none_when_customer_has_not_set_it():
     assert event.release is None
 
 
+def test_original_policy_is_optional():
+    kwargs = _sample_kwargs()
+    del kwargs["original_policy"]
+    event = CspViolationEvent(**kwargs)
+    assert event.original_policy is None
+
+
 def test_round_trip_serialization():
     event = CspViolationEvent(**_sample_kwargs(release="2.0.0"))
     payload = event.model_dump_json()

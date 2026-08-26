@@ -35,7 +35,7 @@ class CspViolationEvent(BaseModel):
     referrer: str | None = None
     effective_directive: str
     violated_directive: str | None = None
-    original_policy: str
+    original_policy: str | None = None
     disposition: Disposition
     blocked_uri: str
     source_file: str | None = None
