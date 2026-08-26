@@ -13,7 +13,7 @@ Not deployed anywhere itself — it's a library dependency, not a service. No CD
 Git-tag-pinned pip dependency, not a private package registry (e.g. AWS CodeArtifact). Each consuming repo's `pyproject.toml` points at a specific tag:
 
 ```
-cspingestionserviceschema @ git+ssh://git@github.com/ps6275/cspIngestionServiceSchema.git@v1.0.0
+cspingestionserviceschema @ git+ssh://git@github.com/rohitnagtilak92-maker/cspIngestionServiceSchema.git@v1.0.0
 ```
 
 Chosen over CodeArtifact for simplicity — no new AWS infra (a CodeArtifact domain/repository, publish credentials in each repo's CI, auth config for local dev) for what is currently a small, low-churn schema. Revisit if the number of shared packages grows or publish/consume friction becomes real.
@@ -32,7 +32,7 @@ cspIngestionServiceSchema/
 ## Steps
 
 1. Scaffold `pyproject.toml` (package name `csp-ingestion-schema` or similar), `src/csp_ingestion_schema/event.py`
-2. Define the internal event model as a Pydantic `BaseModel`: normalized fields from both `csp-report`/`reports+json` formats, plus the enrichment fields (`app_id`, app name, env, region, deploy version, request ID, receive timestamp) — this is the schema `cspIngestionService` produces and pushes to SQS as JSON
+2. Define the internal event model as a Pydantic `BaseModel`: normalized fields from both `csp-report`/`reports+json` formats, plus the enrichment fields the collector adds itself (`app_id`, app name, environment, AWS region, collector service version, customer `release` — from the optional `?release=` query param, `None` if unset, request ID, receive timestamp, client IP) — this is the schema `cspIngestionService` produces and pushes to SQS as JSON
 3. Unit tests: round-trip serialization, and that both source report formats validated in `cspIngestionService`'s `normalize.py` produce a valid instance of this model
 4. CI: lint/test on PR
 5. Tag `v1.0.0` once the shape is stable enough for the three consumers to pin against
